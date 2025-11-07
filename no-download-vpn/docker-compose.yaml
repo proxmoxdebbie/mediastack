@@ -1116,12 +1116,12 @@ services:
     # MIDDLEWARES
     # HOMEPAGE    
       - homepage.group=arr
-      - homepage.name=Mylar3
+      - homepage.name=Mylar
       - homepage.icon=mylar.png
-      - homepage.href=http://mylar3.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.href=http://mylar.${CLOUDFLARE_DNS_ZONE:?err}
       - homepage.description=Comic Manager
       - homepage.widget.type=mylar
-      - homepage.widget.url=http://mylar3:8090
+      - homepage.widget.url=http://mylar:8090
       - homepage.widget.key=                                  # API key from webui
       - homepage.widget.fields=["series", "issues", "wanted"] # optional
       
