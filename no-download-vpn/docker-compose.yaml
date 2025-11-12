@@ -46,7 +46,13 @@ services:
       - POSTGRES_DB=${AUTHENTIK_DATABASE:?err}
       - POSTGRES_USER=${POSTGRESQL_USERNAME:?err}
       - POSTGRES_PASSWORD=${POSTGRESQL_PASSWORD:?err}
-
+    labels:
+    # HOMEPAGE  
+      - homepage.group=Database
+      - homepage.name=PostgreSQL
+      - homepage.icon=postgresql.png
+      - homepage.description=Database Server
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -90,7 +96,13 @@ services:
       - traefik.http.services.guacamole.loadbalancer.server.scheme=http
       - traefik.http.services.guacamole.loadbalancer.server.port=8080
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Admin
+      - homepage.name=Guacamole
+      - homepage.icon=guacamole.png
+      - homepage.href=http://guacamole.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Remote Desktop
+      
   guacd:
     image: guacamole/guacd
     container_name: guacd
@@ -140,7 +152,12 @@ services:
       timeout: 3s
     volumes:
       - ${FOLDER_FOR_DATA:?err}/valkey:/data
-
+    # HOMEPAGE  
+      - homepage.group=Database
+      - homepage.name=Valkey
+      - homepage.icon=valkey.png
+      - homepage.description=Data Structure Server
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -201,7 +218,18 @@ services:
       - traefik.http.services.authentik.loadbalancer.server.scheme=http
       - traefik.http.services.authentik.loadbalancer.server.port=9000
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Network
+      - homepage.name=Authentik
+      - homepage.icon=authentik.png
+      - homepage.href=http://auth.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Authentication Manager
+      - homepage.widget.type=authentik
+      - homepage.widget.version=2
+      - homepage.widget.url=http://authentik:9000
+      - homepage.widget.key=                                                      # API Key https://gethomepage.dev/widgets/services/authentik/
+      - homepage.widget.fields= ["users", "loginsLast24H", "failedLoginsLast24H"] # optional  
+      
   authentic-worker:
     image: ghcr.io/goauthentik/server:${AUTHENTIK_VERSION:?err}
     container_name: authentik-worker
@@ -445,7 +473,7 @@ services:
       - homepage.widget.type=grafana
       - homepage.widget.url=http://grafana:3000
       - homepage.widget.username=admin
-      - homepage.widget.password=                                                              # created on first webui login
+      - homepage.widget.password=                                                              # created on initial webui login
       #- homepage.widget.alerts=alertmanager                                                    # optional, default is grafana
       - homepage.widget.version=2                                                              # optional, default is 1
       - homepage.widget.fields=["dashboards", "datasources", "totalalerts", "alertstriggered"] # optional
@@ -527,7 +555,18 @@ services:
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_AUTHKEY=${TAILSCALE_AUTHKEY:?err}
       - TS_EXTRA_ARGS=--hostname=exit-node --advertise-exit-node --advertise-routes=${LOCAL_SUBNET:?err},${DOCKER_SUBNET:?err} --login-server=https://headscale.${CLOUDFLARE_DNS_ZONE:?err}
-
+    labels:
+    # HOMEPAGE  
+      - homepage.group=VPN
+      - homepage.name=Tailscale
+      - homepage.icon=tailscale.png
+      - homepage.description=Ingress VPN
+      - homepage.widget.type=tailscale
+      - homepage.widget.url=http://tailscale.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.widget.deviceid=                                  # https://gethomepage.dev/widgets/services/tailscale/
+      - homepage.widget.key=                                       # https://gethomepage.dev/widgets/services/tailscale/
+      - homepage.widget.fields=["address", "last_seen", "expires"] # optional
+     
 ###########################################################################
 ###########################################################################
 ##
@@ -564,7 +603,13 @@ services:
       - traefik.http.services.headplane.loadbalancer.server.scheme=http
       - traefik.http.services.headplane.loadbalancer.server.port=3000
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=VPN
+      - homepage.name=Headplane
+      - homepage.icon=headplane.png
+      - homepage.href=http://headplane.${CLOUDFLARE_DNS_ZONE:?err}/admin/
+      - homepage.description=Tailscale Manager
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -651,7 +696,13 @@ services:
       - traefik.http.services.chromium.loadbalancer.server.scheme=http
       - traefik.http.services.chromium.loadbalancer.server.port=${WEBUI_PORT_CHROMIUM:?err}
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Network
+      - homepage.name=Chromium
+      - homepage.icon=chromium.png
+      - homepage.href=http://chromium.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Web Browser
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -707,7 +758,13 @@ services:
       - traefik.http.services.ddns-updater.loadbalancer.server.scheme=http
       - traefik.http.services.ddns-updater.loadbalancer.server.port=${WEBUI_PORT_DDNS_UPDATER:?err}
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Network
+      - homepage.name=DDNS-Updater
+      - homepage.icon=ddns-updater.png
+      - homepage.href=http://ddns-updater.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=DNS Updater
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -747,7 +804,13 @@ services:
       - traefik.http.services.filebot.loadbalancer.server.scheme=http
       - traefik.http.services.filebot.loadbalancer.server.port=5454
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=File Service
+      - homepage.name=Filebot
+      - homepage.icon=filebot.png
+      - homepage.href=http://filebot.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Dynamic DNS Updater
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -780,7 +843,13 @@ services:
       - traefik.http.services.flaresolverr.loadbalancer.server.scheme=http
       - traefik.http.services.flaresolverr.loadbalancer.server.port=8191
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Downloads
+      - homepage.name=Flaresolverr
+      - homepage.icon=flaresolverr.png
+      - homepage.href=http://flaresolverr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=CAPTCHA Solver
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -817,6 +886,12 @@ services:
       - traefik.http.services.heimdall.loadbalancer.server.scheme=http
       - traefik.http.services.heimdall.loadbalancer.server.port=80
     # MIDDLEWARES
+    # HOMEPAGE  
+      - homepage.group=Admin
+      - homepage.name=Heimdall
+      - homepage.icon=heimdall.png
+      - homepage.href=http://heimdall.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Lauchpad
       
 ###########################################################################
 ###########################################################################
@@ -857,7 +932,13 @@ services:
       - traefik.http.services.homarr.loadbalancer.server.scheme=http
       - traefik.http.services.homarr.loadbalancer.server.port=7575
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Admin
+      - homepage.name=Homarr
+      - homepage.icon=homarr.png
+      - homepage.href=http://homarr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Lauchpad
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -927,7 +1008,13 @@ services:
       - traefik.http.services.huntarr.loadbalancer.server.scheme=http
       - traefik.http.services.huntarr.loadbalancer.server.port=9705
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Downloads
+      - homepage.name=Huntarr
+      - homepage.icon=huntarr.png
+      - homepage.href=http://huntarr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Missing Download Finder  
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -1175,7 +1262,7 @@ services:
       - homepage.description=Media server
       - homepage.widget.type=plex
       - homepage.widget.url=http://plex:32400
-      - homepage.widget.key=                                         # see https://www.plexopedia.com/plex-media-server/general/plex-token/
+      - homepage.widget.key=                                         # Plex Token, see https://www.plexopedia.com/plex-media-server/general/plex-token/
       - homepage.widget.fields=["streams", "albums", "movies", "tv"] # optional
 
 ###########################################################################
@@ -1210,7 +1297,19 @@ services:
       - traefik.http.services.portainer.loadbalancer.server.scheme=http
       - traefik.http.services.portainer.loadbalancer.server.port=9000
     # MIDDLEWARES
-
+    # HOMEPAGE
+      - homepage.group=Admin
+      - homepage.name=Portainer
+      - homepage.icon=portainer.png
+      - homepage.href=http://portainer.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Docker Manager
+      - homepage.widget.type=portainer
+      - homepage.widget.url=http://portainer:9000
+      - homepage.widget.env=                                       # https://gethomepage.dev/widgets/services/portainer/
+      - homepage.widget.key=                                       # https://docs.portainer.io/api/access
+      - homepage.widget.kubernetes=false                           # optional, defaults to false
+      - homepage.widget.fields=["running", "stopped", "total"]     # optional, For Kubernetes mode: ["applications", "services", "namespaces"]
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -1444,7 +1543,7 @@ services:
       - homepage.group=Downloads
       - homepage.name=sabnzbd
       - homepage.icon=sabnzbd.png
-      - homepage.href=http://sabnzbd.${DUCKDNS_DOMAINNAME:?err}
+      - homepage.href=http://sabnzbd.${CLOUDFLARE_DNS_ZONE:?err}
       - homepage.description=NZB Client
       - homepage.widget.type=sabnzbd
       - homepage.widget.url=http://sabnzbd:8080              # https://sabnzbd.org/wiki/extra/hostname-check.html
@@ -1731,7 +1830,13 @@ services:
       - UN_CMDHOOK_0_EXCLUDE_0=readarr
       - UN_CMDHOOK_0_EXCLUDE_1=lidarr
       - UN_CMDHOOK_0_TIMEOUT=10s
-
+    labels:
+    # HOMEPAGE  
+      - homepage.group=File Service
+      - homepage.name=Unpackerr
+      - homepage.icon=unpackerr.png
+      - homepage.description=File Decompressor
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -1767,3 +1872,10 @@ services:
       - traefik.http.services.whisparr.loadbalancer.server.scheme=http
       - traefik.http.services.whisparr.loadbalancer.server.port=6969
     # MIDDLEWARES
+    # HOMEPAGE  
+      - homepage.group=Content Managers
+      - homepage.name=Whisparr
+      - homepage.icon=whisparr.png
+      - homepage.href=http://whisparr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Adult Manager 
+      
