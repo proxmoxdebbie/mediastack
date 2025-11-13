@@ -564,7 +564,7 @@ services:
       - homepage.description=Ingress VPN
       - homepage.href=http://tailscale.${CLOUDFLARE_DNS_ZONE:?err}
       - homepage.widget.type=tailscale
-      - homepage.widget.url=http://tailscale.proxmoxdebbie.duckdns.org
+      - homepage.widget.url=http://tailscale.${CLOUDFLARE_DNS_ZONE:?err}
       - homepage.widget.deviceid=                                  # https://gethomepage.dev/widgets/services/tailscale/
       - homepage.widget.key=${TAILSCALE_API_KEY:?err}              # https://gethomepage.dev/widgets/services/tailscale/
       - homepage.widget.fields=["address", "last_seen", "expires"] # optional
@@ -1725,7 +1725,7 @@ services:
       - homepage.group=Downloads
       - homepage.name=sabnzbd
       - homepage.icon=sabnzbd.png
-      - homepage.href=http://sabnzbd.${DUCKDNS_DOMAINNAME:?err}
+      - homepage.href=http://sabnzbd.${CLOUDFLARE_DNS_ZONE:?err}
       - homepage.description=NZB Client
       - homepage.widget.type=sabnzbd
       - homepage.widget.url=http://gluetun:8080              # https://sabnzbd.org/wiki/extra/hostname-check.html - add gluetun
