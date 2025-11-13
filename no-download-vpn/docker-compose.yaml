@@ -46,7 +46,13 @@ services:
       - POSTGRES_DB=${AUTHENTIK_DATABASE:?err}
       - POSTGRES_USER=${POSTGRESQL_USERNAME:?err}
       - POSTGRES_PASSWORD=${POSTGRESQL_PASSWORD:?err}
-
+    labels:
+    # HOMEPAGE  
+      - homepage.group=Database
+      - homepage.name=PostgreSQL
+      - homepage.icon=postgresql.png
+      - homepage.description=Database Server
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -90,7 +96,13 @@ services:
       - traefik.http.services.guacamole.loadbalancer.server.scheme=http
       - traefik.http.services.guacamole.loadbalancer.server.port=8080
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Admin
+      - homepage.name=Guacamole
+      - homepage.icon=guacamole.png
+      - homepage.href=http://guacamole.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Remote Desktop
+      
   guacd:
     image: guacamole/guacd
     container_name: guacd
@@ -140,7 +152,12 @@ services:
       timeout: 3s
     volumes:
       - ${FOLDER_FOR_DATA:?err}/valkey:/data
-
+    # HOMEPAGE  
+      - homepage.group=Database
+      - homepage.name=Valkey
+      - homepage.icon=valkey.png
+      - homepage.description=Data Structure Server
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -201,7 +218,18 @@ services:
       - traefik.http.services.authentik.loadbalancer.server.scheme=http
       - traefik.http.services.authentik.loadbalancer.server.port=9000
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Network
+      - homepage.name=Authentik
+      - homepage.icon=authentik.png
+      - homepage.href=http://auth.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Authentication Manager
+      - homepage.widget.type=authentik
+      - homepage.widget.version=2
+      - homepage.widget.url=http://authentik:9000
+      - homepage.widget.key=${AUTHENTIK_API_KEY:?err}                             # https://gethomepage.dev/widgets/services/authentik/
+      - homepage.widget.fields= ["users", "loginsLast24H", "failedLoginsLast24H"] # optional
+      
   authentic-worker:
     image: ghcr.io/goauthentik/server:${AUTHENTIK_VERSION:?err}
     container_name: authentik-worker
@@ -273,7 +301,18 @@ services:
       - traefik.http.services.traefik.loadbalancer.server.scheme=http
       - traefik.http.services.traefik.loadbalancer.server.port=8080
     # MIDDLEWARES
-
+    # HOMEPAGE
+      - homepage.group=Network
+      - homepage.name=Traefik
+      - homepage.icon=traefik.png
+      - homepage.href=http://traefik.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Reverse Proxy
+      - homepage.widget.type=traefik
+      - homepage.widget.url=http://traefik:8080
+      #- homepage.widget.username=                                    #optional
+      #- homepage.widget.password=                                    #optional
+      - homepage.widget.fields=["routers", "services", "middleware"] # optional
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -331,7 +370,17 @@ services:
       - ${FOLDER_FOR_DATA:?err}/crowdsec:/etc/crowdsec
       - ${FOLDER_FOR_DATA:?err}/crowdsec/data:/var/lib/crowdsec/data/
       - ${FOLDER_FOR_DATA:?err}/logs:/logs:ro
-
+    labels:
+    # HOMEPAGE  
+      - homepage.group=Network
+      - homepage.name=Crowdsec
+      - homepage.icon=crowdsec.png
+      - homepage.description=Threat Managment
+      - homepage.widget.type=crowdsec
+      - homepage.widget.url=http://crowdsec:8080
+      - homepage.widget.username=localhost
+      - homepage.widget.password=${CROWDSEC_LAPI_KEY:?err} #Local API Key (crowdsecLapiKey) from setup guide
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -368,7 +417,16 @@ services:
       - traefik.http.services.prometheus.loadbalancer.server.scheme=http
       - traefik.http.services.prometheus.loadbalancer.server.port=9090
     # MIDDLEWARES
-
+    # HOMEPAGE 
+      - homepage.group=Statistics
+      - homepage.name=Prometheus
+      - homepage.icon=prometheus.png
+      - homepage.href=http://prometheus.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=System Monitor
+      - homepage.widget.type=prometheus
+      - homepage.widget.url=http://prometheus:9090
+      - homepage.widget.fields=["targets_up", "targets_down", "targets_total"] # optional
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -406,7 +464,21 @@ services:
       - traefik.http.services.grafana.loadbalancer.server.scheme=http
       - traefik.http.services.grafana.loadbalancer.server.port=3000
     # MIDDLEWARES
-
+    # HOMEPAGE 
+      - homepage.group=Statistics
+      - homepage.name=Grafana
+      - homepage.icon=grafana.png
+      - homepage.href=http://grafana.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Visual Monitoring
+      - homepage.widget.type=grafana
+      - homepage.widget.url=http://grafana:3000
+      - homepage.widget.username=admin
+      - homepage.widget.username=admin
+      - homepage.widget.password=${GRAFANA_PASSWORD:?err}                                      # created on first webui login
+      #- homepage.widget.alerts=alertmanager                                                   # optional, default is grafana
+      - homepage.widget.version=2                                                              # optional, default is 1
+      - homepage.widget.fields=["dashboards", "datasources", "totalalerts", "alertstriggered"] # optional
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -444,7 +516,18 @@ services:
       - traefik.http.services.headscale.loadbalancer.server.scheme=http
       - traefik.http.services.headscale.loadbalancer.server.port=8080
     # MIDDLEWARES
-
+    # HOMEPAGE 
+      - homepage.group=Network
+      - homepage.name=Headscale
+      - homepage.icon=headscale.png
+      - homepage.href=http://headscale.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Tailscale Co-Ordinator
+      - homepage.widget.type=headscale
+      - homepage.widget.url=http://headscale:8080
+      - homepage.widget.key=                                              # sudo docker exec -it headscale headscale apikeys create --expiration 999d
+      - homepage.widget.nodeId=1                                          # "exit-node" when setup guide followed
+      - homepage.widget.fields=["name", "address", "last_seen", "status"] # optional
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -473,7 +556,19 @@ services:
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_AUTHKEY=${TAILSCALE_AUTHKEY:?err}
       - TS_EXTRA_ARGS=--hostname=exit-node --advertise-exit-node --advertise-routes=${LOCAL_SUBNET:?err},${DOCKER_SUBNET:?err} --login-server=https://headscale.${CLOUDFLARE_DNS_ZONE:?err}
-
+    labels:
+    # HOMEPAGE  
+      - homepage.group=VPN
+      - homepage.name=Tailscale
+      - homepage.icon=tailscale.png
+      - homepage.description=Ingress VPN
+      - homepage.href=http://tailscale.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.widget.type=tailscale
+      - homepage.widget.url=http://tailscale.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.widget.deviceid=                                  # https://gethomepage.dev/widgets/services/tailscale/
+      - homepage.widget.key=${TAILSCALE_API_KEY:?err}              # https://gethomepage.dev/widgets/services/tailscale/
+      - homepage.widget.fields=["address", "last_seen", "expires"] # optional
+     
 ###########################################################################
 ###########################################################################
 ##
@@ -510,7 +605,13 @@ services:
       - traefik.http.services.headplane.loadbalancer.server.scheme=http
       - traefik.http.services.headplane.loadbalancer.server.port=3000
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=VPN
+      - homepage.name=Headplane
+      - homepage.icon=headplane.png
+      - homepage.href=http://headplane.${CLOUDFLARE_DNS_ZONE:?err}/admin/
+      - homepage.description=Tailscale Manager
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -547,7 +648,17 @@ services:
       - traefik.http.services.bazarr.loadbalancer.server.scheme=http
       - traefik.http.services.bazarr.loadbalancer.server.port=6767
     # MIDDLEWARES
-
+    # HOMEPAGE
+      - homepage.group=arr
+      - homepage.name=Bazarr
+      - homepage.icon=bazarr.png
+      - homepage.href=http://bazarr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Subtitle Manager
+      - homepage.widget.type=bazarr
+      - homepage.widget.url=http://bazarr:6767
+      - homepage.widget.key=${BAZARR_API_KEY:?err}                  # API key from webui
+      - homepage.widget.fields=["missingEpisodes", "missingMovies"] # optional
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -587,7 +698,13 @@ services:
       - traefik.http.services.chromium.loadbalancer.server.scheme=http
       - traefik.http.services.chromium.loadbalancer.server.port=${WEBUI_PORT_CHROMIUM:?err}
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Network
+      - homepage.name=Chromium
+      - homepage.icon=chromium.png
+      - homepage.href=http://chromium.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Web Browser
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -643,7 +760,13 @@ services:
       - traefik.http.services.ddns-updater.loadbalancer.server.scheme=http
       - traefik.http.services.ddns-updater.loadbalancer.server.port=${WEBUI_PORT_DDNS_UPDATER:?err}
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Network
+      - homepage.name=DDNS-Updater
+      - homepage.icon=ddns-updater.png
+      - homepage.href=http://ddns-updater.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=DNS Updater
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -683,7 +806,13 @@ services:
       - traefik.http.services.filebot.loadbalancer.server.scheme=http
       - traefik.http.services.filebot.loadbalancer.server.port=5454
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=File Service
+      - homepage.name=Filebot
+      - homepage.icon=filebot.png
+      - homepage.href=http://filebot.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=File Metadata Manager
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -716,7 +845,13 @@ services:
       - traefik.http.services.flaresolverr.loadbalancer.server.scheme=http
       - traefik.http.services.flaresolverr.loadbalancer.server.port=8191
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Downloads
+      - homepage.name=Flaresolverr
+      - homepage.icon=flaresolverr.png
+      - homepage.href=http://flaresolverr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=CAPTCHA Solver
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -753,6 +888,12 @@ services:
       - traefik.http.services.heimdall.loadbalancer.server.scheme=http
       - traefik.http.services.heimdall.loadbalancer.server.port=80
     # MIDDLEWARES
+    # HOMEPAGE  
+      - homepage.group=Admin
+      - homepage.name=Heimdall
+      - homepage.icon=heimdall.png
+      - homepage.href=http://heimdall.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Lauchpad
       
 ###########################################################################
 ###########################################################################
@@ -793,7 +934,13 @@ services:
       - traefik.http.services.homarr.loadbalancer.server.scheme=http
       - traefik.http.services.homarr.loadbalancer.server.port=7575
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Admin
+      - homepage.name=Homarr
+      - homepage.icon=homarr.png
+      - homepage.href=http://homarr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Lauchpad
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -863,7 +1010,13 @@ services:
       - traefik.http.services.huntarr.loadbalancer.server.scheme=http
       - traefik.http.services.huntarr.loadbalancer.server.port=9705
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Downloads
+      - homepage.name=Huntarr
+      - homepage.icon=huntarr.png
+      - homepage.href=http://huntarr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Missing Download Finder  
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -905,7 +1058,23 @@ services:
       - traefik.http.services.jellyfin.loadbalancer.server.scheme=http
       - traefik.http.services.jellyfin.loadbalancer.server.port=8096
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Media
+      - homepage.name=Jellyfin
+      - homepage.icon=jellyfin.png
+      - homepage.href=http://jellyfin.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Media Server
+      - homepage.widget.type=jellyfin
+      - homepage.widget.url=http://jellyfin:8096
+      - homepage.widget.key=${JELLYFIN_API_KEY:?err}                     # API key from webui
+      - homepage.widget.enableUser=true                                  # optional, defaults to false
+      - homepage.widget.enableMediaControl=true                          # optional, defaults to true
+      - homepage.widget.enableNowPlaying=true                            # optional, defaults to true
+      - homepage.widget.showEpisodeNumber=true                           # optional, defaults to false
+      - homepage.widget.expandOneStreamToTwoRows=true                    # optional, defaults to true
+      - homepage.widget.enableBlocks=true                                # optional, defaults to false
+      - homepage.widget.fields=["movies", "series", "episodes", "songs"] # optional  
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -940,7 +1109,17 @@ services:
       - traefik.http.services.jellyseerr.loadbalancer.server.scheme=http
       - traefik.http.services.jellyseerr.loadbalancer.server.port=5055
     # MIDDLEWARES
-
+    # HOMEPAGE 
+      - homepage.group=Media
+      - homepage.name=Jellyseerr
+      - homepage.icon=jellyseerr.png
+      - homepage.href=http://jellyseerr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Media Requester
+      - homepage.widget.type=jellyseerr
+      - homepage.widget.url=http://jellyseerr:5055
+      - homepage.widget.key=${JELLYSEERR_API_KEY:?err}                        # API key from webui
+      - homepage.widget.fields=["pending", "approved", "available", "issues"] # optional
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -977,7 +1156,17 @@ services:
       - traefik.http.services.lidarr.loadbalancer.server.scheme=http
       - traefik.http.services.lidarr.loadbalancer.server.port=8686
     # MIDDLEWARES
-
+    # HOMEPAGE    
+      - homepage.group=arr
+      - homepage.name=Lidarr
+      - homepage.icon=lidarr.png
+      - homepage.href=http://lidarr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Music Manager
+      - homepage.widget.type=lidarr
+      - homepage.widget.url=http://lidarr:8686
+      - homepage.widget.key=${LIDARR_API_KEY:?err}             # API key from webui
+      - homepage.widget.fields=["wanted", "queued", "artists"] # optional  
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -1014,7 +1203,17 @@ services:
       - traefik.http.services.mylar.loadbalancer.server.scheme=http
       - traefik.http.services.mylar.loadbalancer.server.port=8090
     # MIDDLEWARES
-
+    # HOMEPAGE    
+      - homepage.group=arr
+      - homepage.name=Mylar
+      - homepage.icon=mylar.png
+      - homepage.href=http://mylar.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Comic Manager
+      - homepage.widget.type=mylar
+      - homepage.widget.url=http://mylar:8090
+      - homepage.widget.key=${MYLAR3_API_KEY:?err}            # API key from webui
+      - homepage.widget.fields=["series", "issues", "wanted"] # optional
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -1057,6 +1256,16 @@ services:
       - traefik.http.services.plex.loadbalancer.server.scheme=http
       - traefik.http.services.plex.loadbalancer.server.port=32400
     # MIDDLEWARES
+    # HOMEPAGE 
+      - homepage.group=Media
+      - homepage.name=Plex
+      - homepage.icon=plex.png
+      - homepage.href=http://plex.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Media server
+      - homepage.widget.type=plex
+      - homepage.widget.url=http://plex:32400
+      - homepage.widget.key=${PLEX_API_KEY:?err}                     # see https://www.plexopedia.com/plex-media-server/general/plex-token/
+      - homepage.widget.fields=["streams", "albums", "movies", "tv"] # optional
 
 ###########################################################################
 ###########################################################################
@@ -1090,7 +1299,19 @@ services:
       - traefik.http.services.portainer.loadbalancer.server.scheme=http
       - traefik.http.services.portainer.loadbalancer.server.port=9000
     # MIDDLEWARES
-
+    # HOMEPAGE
+      - homepage.group=Admin
+      - homepage.name=Portainer
+      - homepage.icon=portainer.png
+      - homepage.href=http://portainer.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Docker Manager
+      - homepage.widget.type=portainer
+      - homepage.widget.url=http://portainer:9000
+      - homepage.widget.env=                                       # https://gethomepage.dev/widgets/services/portainer/
+      - homepage.widget.key=${PORTAINER_API_KEY:?err}              # https://docs.portainer.io/api/access
+      - homepage.widget.kubernetes=false                           # optional, defaults to false
+      - homepage.widget.fields=["running", "stopped", "total"]     # optional, For Kubernetes mode: ["applications", "services", "namespaces"]
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -1126,7 +1347,17 @@ services:
       - traefik.http.services.prowlarr.loadbalancer.server.scheme=http
       - traefik.http.services.prowlarr.loadbalancer.server.port=9696
     # MIDDLEWARES
-
+    # HOMEPAGE 
+      - homepage.group=arr
+      - homepage.name=Prowlarr
+      - homepage.icon=prowlarr.png
+      - homepage.href=http://prowlarr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Tracker Proxy
+      - homepage.widget.type=prowlarr
+      - homepage.widget.url=http://prowlarr:9696
+      - homepage.widget.key=${PROWLARR_API_KEY:?err}                                                            # API key from webui
+      - homepage.widget.fields=["numberOfGrabs", "numberOfQueries", "numberOfFailGrabs", "numberOfFailQueries"] # optional 
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -1165,7 +1396,20 @@ services:
       - traefik.http.services.qbittorrent.loadbalancer.server.scheme=http
       - traefik.http.services.qbittorrent.loadbalancer.server.port=${WEBUI_PORT_QBITTORRENT:?err}
     # MIDDLEWARES
-
+    # HOMEPAGE 
+      - homepage.group=Downloads
+      - homepage.name=qBittorrent
+      - homepage.icon=qbittorrent.png
+      - homepage.href=http://qbittorrent.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Torrent Client
+      - homepage.widget.type=qbittorrent
+      - homepage.widget.url=http://qbittorrent:${WEBUI_PORT_QBITTORRENT:?err}
+     # - homepage.widget.username=${QBITTORRENT_USER:?err}              # optional, from webui
+     # - homepage.widget.password=${QBITTORRENT_PASSWORD:?err}          # optional, from webui
+      - homepage.widget.enableLeechProgress=true                       # optional, defaults to false
+      - homepage.widget.enableLeechSize=true                           # optional, defaults to false
+      - homepage.widget.fields=["leech", "download", "seed", "upload"] # optional
+    
 ###########################################################################
 ###########################################################################
 ##
@@ -1202,7 +1446,18 @@ services:
       - traefik.http.services.radarr.loadbalancer.server.scheme=http
       - traefik.http.services.radarr.loadbalancer.server.port=7878
     # MIDDLEWARES
-
+    # HOMEPAGE 
+      - homepage.group=arr
+      - homepage.name=Radarr
+      - homepage.icon=radarr.png
+      - homepage.href=http://radarr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Movie Manager
+      - homepage.widget.type=radarr
+      - homepage.widget.url=http://radarr:7878
+      - homepage.widget.key=${RADARR_API_KEY:?err}                       # API key from webui
+      - homepage.widget.enableQueue=true                                 # optional, defaults to false
+      - homepage.widget.fields=["wanted", "missing", "queued", "movies"] # optional
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -1239,7 +1494,17 @@ services:
       - traefik.http.services.readarr.loadbalancer.server.scheme=http
       - traefik.http.services.readarr.loadbalancer.server.port=8787
     # MIDDLEWARES
-
+    # HOMEPAGE 
+      - homepage.group=arr
+      - homepage.name=Readarr
+      - homepage.icon=readarr.png
+      - homepage.href=http://readarr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=eBook Manager
+      - homepage.widget.type=readarr
+      - homepage.widget.url=http://readarr:8787
+      - homepage.widget.key=${READARR_API_KEY:?err}          # API key from webui
+      - homepage.widget.fields=["wanted", "queued", "books"] # optional
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -1276,7 +1541,17 @@ services:
       - traefik.http.services.sabnzbd.loadbalancer.server.scheme=http
       - traefik.http.services.sabnzbd.loadbalancer.server.port=8080
     # MIDDLEWARES
-
+    # HOMEPAGE 
+      - homepage.group=Downloads
+      - homepage.name=sabnzbd
+      - homepage.icon=sabnzbd.png
+      - homepage.href=http://sabnzbd.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=NZB Client
+      - homepage.widget.type=sabnzbd
+      - homepage.widget.url=http://sabnzbd:8080              # https://sabnzbd.org/wiki/extra/hostname-check.html
+      - homepage.widget.key=${SABNZBD_API_KEY:?err}          # API key from webui
+      - homepage.widget.fields=["rate", "queue", "timeleft"] # optional
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -1313,7 +1588,18 @@ services:
       - traefik.http.services.sonarr.loadbalancer.server.scheme=http
       - traefik.http.services.sonarr.loadbalancer.server.port=8989
     # MIDDLEWARES
-
+    # HOMEPAGE 
+      - homepage.group=arr
+      - homepage.name=Sonarr
+      - homepage.icon=sonarr.png
+      - homepage.href=http://sonarr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=TV Show Manager
+      - homepage.widget.type=sonarr
+      - homepage.widget.url=http://sonarr:8989
+      - homepage.widget.key=${SONARR_API_KEY:?err}                   # API key from webui
+      - homepage.widget.enableQueue=true                             # optional, defaults to false
+      - homepage.widget.fields=["wanted", "queued", "series"]        # optional
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -1359,7 +1645,17 @@ services:
       - traefik.http.services.tdarr.loadbalancer.server.scheme=http
       - traefik.http.services.tdarr.loadbalancer.server.port=${WEBUI_PORT_TDARR:?err}
     # MIDDLEWARES
-
+    # HOMEPAGE 
+      - homepage.group=Media
+      - homepage.name=Tdarr
+      - homepage.icon=tdarr.png
+      - homepage.href=http://tdarr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Video Transcoder
+      - homepage.widget.type=tdarr
+      - homepage.widget.url=http://tdarr:${WEBUI_PORT_TDARR:?err}
+      #- homepage.widget.key=                                              # optional API key from webui
+      - homepage.widget.fields=["queue", "processed", "errored", "saved"] # optional   
+      
   tdarr-node:
     image: ghcr.io/haveagitgat/tdarr_node:latest
     container_name: tdarr-node
@@ -1536,7 +1832,13 @@ services:
       - UN_CMDHOOK_0_EXCLUDE_0=readarr
       - UN_CMDHOOK_0_EXCLUDE_1=lidarr
       - UN_CMDHOOK_0_TIMEOUT=10s
-
+    labels:
+    # HOMEPAGE  
+      - homepage.group=File Service
+      - homepage.name=Unpackerr
+      - homepage.icon=unpackerr.png
+      - homepage.description=File Decompressor
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -1572,3 +1874,10 @@ services:
       - traefik.http.services.whisparr.loadbalancer.server.scheme=http
       - traefik.http.services.whisparr.loadbalancer.server.port=6969
     # MIDDLEWARES
+    # HOMEPAGE  
+      - homepage.group=Content Managers
+      - homepage.name=Whisparr
+      - homepage.icon=whisparr.png
+      - homepage.href=http://whisparr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Adult Manager 
+      
