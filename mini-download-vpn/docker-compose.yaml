@@ -96,7 +96,13 @@ services:
       - traefik.http.services.guacamole.loadbalancer.server.scheme=http
       - traefik.http.services.guacamole.loadbalancer.server.port=8080
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Admin
+      - homepage.name=Guacamole
+      - homepage.icon=guacamole.png
+      - homepage.href=http://guacamole.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Remote Destktop Manager
+      
   guacd:
     image: guacamole/guacd
     container_name: guacd
@@ -468,8 +474,8 @@ services:
       - homepage.widget.type=grafana
       - homepage.widget.url=http://grafana:3000
       - homepage.widget.username=admin
-      - homepage.widget.password=                                                              # created on first webui login
-      #- homepage.widget.alerts=alertmanager                                                    # optional, default is grafana
+      - homepage.widget.password=${GRAFANA_PASSWORD:?err}                                      # created on first webui login
+      #- homepage.widget.alerts=alertmanager                                                   # optional, default is grafana
       - homepage.widget.version=2                                                              # optional, default is 1
       - homepage.widget.fields=["dashboards", "datasources", "totalalerts", "alertstriggered"] # optional
       
@@ -518,7 +524,7 @@ services:
       - homepage.description=Tailscale Co-Ordinator
       - homepage.widget.type=headscale
       - homepage.widget.url=http://headscale:8080
-      - homepage.widget.key=                                              # sudo docker exec -it headscale headscale apikeys create --expiration 999d
+      - homepage.widget.key=${HEADSCALE_API_KEY:?err}                     # sudo docker exec -it headscale headscale apikeys create --expiration 999d
       - homepage.widget.nodeId=1                                          # "exit-node" when setup guide followed
       - homepage.widget.fields=["name", "address", "last_seen", "status"] # optional
       
@@ -550,7 +556,19 @@ services:
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_AUTHKEY=${TAILSCALE_AUTHKEY:?err}
       - TS_EXTRA_ARGS=--hostname=exit-node --advertise-exit-node --advertise-routes=${LOCAL_SUBNET:?err},${DOCKER_SUBNET:?err} --login-server=https://headscale.${CLOUDFLARE_DNS_ZONE:?err}
-
+    labels:
+    # HOMEPAGE                  --setup with Headplane undocumented
+      - homepage.group=VPN
+      - homepage.name=Tailscale
+      - homepage.icon=tailscale.png
+      - homepage.description=Ingress VPN
+      - homepage.href=http://tailscale.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.widget.type=tailscale
+      - homepage.widget.url=http://tailscale.proxmoxdebbie.duckdns.org
+      - homepage.widget.deviceid=                                  # https://gethomepage.dev/widgets/services/tailscale/
+      - homepage.widget.key=${TAILSCALE_API_KEY:?err}              # https://gethomepage.dev/widgets/services/tailscale/
+      - homepage.widget.fields=["address", "last_seen", "expires"] # optional
+     
 ###########################################################################
 ###########################################################################
 ##
@@ -587,7 +605,13 @@ services:
       - traefik.http.services.headplane.loadbalancer.server.scheme=http
       - traefik.http.services.headplane.loadbalancer.server.port=3000
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=VPN
+      - homepage.name=Headplane
+      - homepage.icon=headplane.png
+      - homepage.href=http://headplane.${CLOUDFLARE_DNS_ZONE:?err}/admin/
+      - homepage.description=Tailscale Manager
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -595,6 +619,7 @@ services:
 ##  Function: VPN Client
 ##
 ##  Documentation: https://github.com/qdm12/gluetun-wiki
+##                 https://github.com/qdm12/gluetun-wiki/blob/main/setup/advanced/control-server.md 
 ##
 ###########################################################################
 ###########################################################################
@@ -620,7 +645,7 @@ services:
 
     volumes:
       - ${FOLDER_FOR_DATA:?err}/gluetun:/gluetun
-      - ${FOLDER_FOR_DATA:?err}/gluetun/auth:/gluetun/auth # Needed for Homepage API
+      - ${FOLDER_FOR_DATA:?err}/gluetun/auth:/gluetun/auth                        # Needed for control server API (Homepage widget, QBT GSP mod)
     environment:
       - PUID=${PUID:?err}
       - PGID=${PGID:?err}
@@ -650,13 +675,13 @@ services:
       - mediastack
     labels:  
     # HOMEPAGE  
-      - homepage.group=Network
+      - homepage.group=VPN
       - homepage.name=Gluetun
       - homepage.icon=gluetun.png
       - homepage.description=Egress VPN
       - homepage.widget.type=gluetun
       - homepage.widget.url=http://gluetun:${GLUETUN_CONTROL_PORT:?err}
-      - homepage.widget.key=                                                        # https://github.com/qdm12/gluetun-wiki/blob/main/setup/advanced/control-server.md
+      - homepage.widget.key=${GLUETUN_API_KEY:?err}                                 # sudo docker run --rm qmcgaw/gluetun genkey, add to auth/config.toml | 
       - homepage.widget.fields=["public_ip", "region", "country", "port_forwarded"] # optional
       
 ###########################################################################
@@ -745,7 +770,13 @@ services:
       - traefik.http.services.chromium.loadbalancer.server.scheme=http
       - traefik.http.services.chromium.loadbalancer.server.port=${WEBUI_PORT_CHROMIUM:?err}
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Admin
+      - homepage.name=Chromium
+      - homepage.icon=chromium.png
+      - homepage.href=http://chromium.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Web Browser
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -848,6 +879,12 @@ services:
       - traefik.http.services.filebot.loadbalancer.server.scheme=http
       - traefik.http.services.filebot.loadbalancer.server.port=5454
     # MIDDLEWARES
+    # HOMEPAGE  
+      - homepage.group=File Service
+      - homepage.name=filebot
+      - homepage.icon=filebot.png
+      - homepage.href=http://filebot.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Metadata Lookup
 
 ###########################################################################
 ###########################################################################
@@ -925,6 +962,12 @@ services:
       - traefik.http.services.heimdall.loadbalancer.server.scheme=http
       - traefik.http.services.heimdall.loadbalancer.server.port=80
     # MIDDLEWARES
+    # HOMEPAGE  
+      - homepage.group=Admin
+      - homepage.name=Heimdall
+      - homepage.icon=heimdall.png
+      - homepage.href=http://heimdall.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Lauchpad
       
 ###########################################################################
 ###########################################################################
@@ -966,7 +1009,13 @@ services:
       - traefik.http.services.homarr.loadbalancer.server.scheme=http
       - traefik.http.services.homarr.loadbalancer.server.port=7575
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Admin
+      - homepage.name=Homarr
+      - homepage.icon=homarr.png
+      - homepage.href=http://homarr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Lauchpad
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -1437,8 +1486,8 @@ services:
       - homepage.description=Torrent Client
       - homepage.widget.type=qbittorrent
       - homepage.widget.url=http://qbittorrent:${WEBUI_PORT_QBITTORRENT:?err}
-      #- homepage.widget.username=                                      # optional for local subnets
-      #- homepage.widget.password=                                      # optional for local subnets
+     # - homepage.widget.username=${QBITTORRENT_USER:?err}              # optional, from webui
+     # - homepage.widget.password=${QBITTORRENT_PASSWORD:?err}          # optional, from webui
       - homepage.widget.enableLeechProgress=true                       # optional, defaults to false
       - homepage.widget.enableLeechSize=true                           # optional, defaults to false
       - homepage.widget.fields=["leech", "download", "seed", "upload"] # optional
@@ -1586,8 +1635,8 @@ services:
       - homepage.href=http://sabnzbd.${DUCKDNS_DOMAINNAME:?err}
       - homepage.description=NZB Client
       - homepage.widget.type=sabnzbd
-      - homepage.widget.url=http://sabnzbd:8080              # https://sabnzbd.org/wiki/extra/hostname-check.html
-      - homepage.widget.key=                                 # API key from webui
+      - homepage.widget.url=http://gluetun:8080              # https://sabnzbd.org/wiki/extra/hostname-check.html - add gluetun
+      - homepage.widget.key=${SABNZBD_API_KEY:?err}          # API key from webui
       - homepage.widget.fields=["rate", "queue", "timeleft"] # optional
       
 ###########################################################################
@@ -1870,7 +1919,13 @@ services:
       - UN_CMDHOOK_0_EXCLUDE_0=readarr
       - UN_CMDHOOK_0_EXCLUDE_1=lidarr
       - UN_CMDHOOK_0_TIMEOUT=10s
-
+    labels:
+    # HOMEPAGE  
+      - homepage.group=File Service
+      - homepage.name=Unpackerr
+      - homepage.icon=unpackerr.png
+      - homepage.description=File Decompressor
+      
 ###########################################################################
 ###########################################################################
 ##
