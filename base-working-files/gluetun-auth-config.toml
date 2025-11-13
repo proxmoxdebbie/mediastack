@@ -1,0 +1,15 @@
+#remane this file to "config.toml" and relocate to gluetun/auth folder
+[[roles]]
+name = "HomePage"
+# Define a list of routes with the syntax "Http-Method /path"
+routes = ["GET /v1/publicip/ip","GET /v1/openvpn/portforwarded"]
+# Define an authentication method with its parameters
+auth = "apikey"
+apikey = "apikepapikeyapikey"  # sudo docker run --rm qmcgaw/gluetun genkey
+[[roles]]
+name = "Qbittorrent"
+# Define a list of routes with the syntax "Http-Method /path"
+routes = ["GET /v1/publicip/ip","GET /v1/openvpn/portforwarded"]
+# Define an authentication method with its parameters
+auth = "apikey"
+apikey = "apikepapikeyapikey"  # sudo docker run --rm qmcgaw/gluetun genkey
