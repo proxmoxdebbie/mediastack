@@ -809,7 +809,7 @@ services:
       - homepage.name=Filebot
       - homepage.icon=filebot.png
       - homepage.href=http://filebot.${CLOUDFLARE_DNS_ZONE:?err}
-      - homepage.description=Dynamic DNS Updater
+      - homepage.description=File Metadata Manager
       
 ###########################################################################
 ###########################################################################
