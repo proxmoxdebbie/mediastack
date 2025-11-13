@@ -1400,7 +1400,7 @@ services:
       - homepage.group=Downloads
       - homepage.name=qBittorrent
       - homepage.icon=qbittorrent.png
-      - homepage.href=http://qbittorrent-clearnet.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.href=http://qbittorrent.${CLOUDFLARE_DNS_ZONE:?err}
       - homepage.description=Torrent Client
       - homepage.widget.type=qbittorrent
       - homepage.widget.url=http://qbittorrent:${WEBUI_PORT_QBITTORRENT:?err}
