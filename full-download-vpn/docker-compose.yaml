@@ -474,7 +474,7 @@ services:
       - homepage.widget.type=grafana
       - homepage.widget.url=http://grafana:3000
       - homepage.widget.username=admin
-      - homepage.widget.password=                                                              # created on first webui login
+      - homepage.widget.password=${GRAFANA_PASSWORD:?err}                                      # created on first webui login
       #- homepage.widget.alerts=alertmanager                                                    # optional, default is grafana
       - homepage.widget.version=2                                                              # optional, default is 1
       - homepage.widget.fields=["dashboards", "datasources", "totalalerts", "alertstriggered"] # optional
@@ -802,7 +802,13 @@ services:
       - traefik.http.services.chromium.loadbalancer.server.scheme=http
       - traefik.http.services.chromium.loadbalancer.server.port=${WEBUI_PORT_CHROMIUM:?err}
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Admin
+      - homepage.name=Chromium
+      - homepage.icon=chromium.png
+      - homepage.href=http://chromium.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Web Browser
+      
 ###########################################################################
 ###########################################################################
 ##
