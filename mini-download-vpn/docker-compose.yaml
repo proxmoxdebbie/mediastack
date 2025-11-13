@@ -46,7 +46,13 @@ services:
       - POSTGRES_DB=${AUTHENTIK_DATABASE:?err}
       - POSTGRES_USER=${POSTGRESQL_USERNAME:?err}
       - POSTGRES_PASSWORD=${POSTGRESQL_PASSWORD:?err}
-
+    labels:
+    # HOMEPAGE  
+      - homepage.group=Database
+      - homepage.name=PostgreSQL
+      - homepage.icon=postgresql.png
+      - homepage.description=Database Server
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -140,7 +146,13 @@ services:
       timeout: 3s
     volumes:
       - ${FOLDER_FOR_DATA:?err}/valkey:/data
-
+    labels:
+    # HOMEPAGE  
+      - homepage.group=Database
+      - homepage.name=Valkey
+      - homepage.icon=valkey.png
+      - homepage.description=Data Structure Server
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -201,7 +213,18 @@ services:
       - traefik.http.services.authentik.loadbalancer.server.scheme=http
       - traefik.http.services.authentik.loadbalancer.server.port=9000
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Network
+      - homepage.name=Authentik
+      - homepage.icon=authentik.png
+      - homepage.href=http://auth.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Authentication Manager
+      - homepage.widget.type=authentik
+      - homepage.widget.version=2
+      - homepage.widget.url=http://authentik:9000
+      - homepage.widget.key=${AUTHENTIK_API_KEY:?err}                             # https://gethomepage.dev/widgets/services/authentik/
+      - homepage.widget.fields= ["users", "loginsLast24H", "failedLoginsLast24H"] # optional
+      
   authentic-worker:
     image: ghcr.io/goauthentik/server:${AUTHENTIK_VERSION:?err}
     container_name: authentik-worker
@@ -351,7 +374,7 @@ services:
       - homepage.widget.type=crowdsec
       - homepage.widget.url=http://crowdsec:8080
       - homepage.widget.username=localhost
-      - homepage.widget.password=                #Local API Key (crowdsecLapiKey) from setup guide
+      - homepage.widget.password=${CROWDSEC_LAPI_KEY:?err} #Local API Key (crowdsecLapiKey) from setup guide
 
 ###########################################################################
 ###########################################################################
@@ -680,8 +703,9 @@ services:
       - homepage.description=Subtitle Manager
       - homepage.widget.type=bazarr
       - homepage.widget.url=http://bazarr:6767
-      - homepage.widget.key=                                        # API key from webui
+      - homepage.widget.key=${BAZARR_API_KEY:?err}                  # API key from webui
       - homepage.widget.fields=["missingEpisodes", "missingMovies"] # optional
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -778,7 +802,13 @@ services:
       - traefik.http.services.ddns-updater.loadbalancer.server.scheme=http
       - traefik.http.services.ddns-updater.loadbalancer.server.port=${WEBUI_PORT_DDNS_UPDATER:?err}
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Network
+      - homepage.name=ddns-updater
+      - homepage.icon=ddns-updater.png
+      - homepage.href=http://ddns-updater.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=DNS Updater
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -851,7 +881,13 @@ services:
       - traefik.http.services.flaresolverr.loadbalancer.server.scheme=http
       - traefik.http.services.flaresolverr.loadbalancer.server.port=8191
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Downloads
+      - homepage.name=Flaresolverr
+      - homepage.icon=flaresolverr.png
+      - homepage.href=http://flaresolverr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=CAPTCHA Solver
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -1001,7 +1037,13 @@ services:
       - traefik.http.services.huntarr.loadbalancer.server.scheme=http
       - traefik.http.services.huntarr.loadbalancer.server.port=9705
     # MIDDLEWARES
-
+    # HOMEPAGE  
+      - homepage.group=Downloads
+      - homepage.name=Huntarr
+      - homepage.icon=huntarr.png
+      - homepage.href=http://huntarr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Missing Download Finder   
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -1051,14 +1093,14 @@ services:
       - homepage.description=Media Server
       - homepage.widget.type=jellyfin
       - homepage.widget.url=http://jellyfin:8096
-      - homepage.widget.key=                                             # API key from webui
+      - homepage.widget.key=${JELLYFIN_API_KEY:?err}                     # API key from webui
       - homepage.widget.enableUser=true                                  # optional, defaults to false
       - homepage.widget.enableMediaControl=true                          # optional, defaults to true
       - homepage.widget.enableNowPlaying=true                            # optional, defaults to true
       - homepage.widget.showEpisodeNumber=true                           # optional, defaults to false
       - homepage.widget.expandOneStreamToTwoRows=true                    # optional, defaults to true
       - homepage.widget.enableBlocks=true                                # optional, defaults to false
-      - homepage.widget.fields=["movies", "series", "episodes", "songs"] # optional
+      - homepage.widget.fields=["movies", "series", "episodes", "songs"] # optional  
       
 ###########################################################################
 ###########################################################################
@@ -1102,7 +1144,7 @@ services:
       - homepage.description=Media Requester
       - homepage.widget.type=jellyseerr
       - homepage.widget.url=http://jellyseerr:5055
-      - homepage.widget.key=                                                  # API key from webui
+      - homepage.widget.key=${JELLYSEERR_API_KEY:?err}                        # API key from webui
       - homepage.widget.fields=["pending", "approved", "available", "issues"] # optional
       
 ###########################################################################
@@ -1149,8 +1191,8 @@ services:
       - homepage.description=Music Manager
       - homepage.widget.type=lidarr
       - homepage.widget.url=http://lidarr:8686
-      - homepage.widget.key=                                   # API key from webui
-      - homepage.widget.fields=["wanted", "queued", "artists"] # optional 
+      - homepage.widget.key=${LIDARR_API_KEY:?err}             # API key from webui
+      - homepage.widget.fields=["wanted", "queued", "artists"] # optional   
       
 ###########################################################################
 ###########################################################################
@@ -1196,7 +1238,7 @@ services:
       - homepage.description=Comic Manager
       - homepage.widget.type=mylar
       - homepage.widget.url=http://mylar:8090
-      - homepage.widget.key=                                  # API key from webui
+      - homepage.widget.key=${MYLAR3_API_KEY:?err}            # API key from webui
       - homepage.widget.fields=["series", "issues", "wanted"] # optional
       
 ###########################################################################
@@ -1249,7 +1291,7 @@ services:
       - homepage.description=Media server
       - homepage.widget.type=plex
       - homepage.widget.url=http://plex:32400
-      - homepage.widget.key=                                         # see https://www.plexopedia.com/plex-media-server/general/plex-token/
+      - homepage.widget.key=${PLEX_API_KEY:?err}                     # see https://www.plexopedia.com/plex-media-server/general/plex-token/
       - homepage.widget.fields=["streams", "albums", "movies", "tv"] # optional
       
 ###########################################################################
@@ -1285,7 +1327,19 @@ services:
       - traefik.http.services.portainer.loadbalancer.server.scheme=http
       - traefik.http.services.portainer.loadbalancer.server.port=9000
     # MIDDLEWARES
-
+    # HOMEPAGE
+      - homepage.group=Admin
+      - homepage.name=Portainer
+      - homepage.icon=portainer.png
+      - homepage.href=http://portainer.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Docker Manager
+      - homepage.widget.type=portainer
+      - homepage.widget.url=http://portainer:9000
+      - homepage.widget.env=                                       # https://gethomepage.dev/widgets/services/portainer/
+      - homepage.widget.key=${PORTAINER_API_KEY:?err}              # https://docs.portainer.io/api/access
+      - homepage.widget.kubernetes=false                           # optional, defaults to false
+      - homepage.widget.fields=["running", "stopped", "total"]     # optional, For Kubernetes mode: ["applications", "services", "namespaces"]
+      
 ###########################################################################
 ###########################################################################
 ##
@@ -1329,7 +1383,7 @@ services:
       - homepage.description=Tracker Proxy
       - homepage.widget.type=prowlarr
       - homepage.widget.url=http://prowlarr:9696
-      - homepage.widget.key=                                                                                    # API key from webui
+      - homepage.widget.key=${PROWLARR_API_KEY:?err}                                                            # API key from webui
       - homepage.widget.fields=["numberOfGrabs", "numberOfQueries", "numberOfFailGrabs", "numberOfFailQueries"] # optional 
       
 ###########################################################################
@@ -1433,7 +1487,7 @@ services:
       - homepage.description=Movie Manager
       - homepage.widget.type=radarr
       - homepage.widget.url=http://radarr:7878
-      - homepage.widget.key=                                             # API key from webui
+      - homepage.widget.key=${RADARR_API_KEY:?err}                       # API key from webui
       - homepage.widget.enableQueue=true                                 # optional, defaults to false
       - homepage.widget.fields=["wanted", "missing", "queued", "movies"] # optional
       
@@ -1481,7 +1535,7 @@ services:
       - homepage.description=eBook Manager
       - homepage.widget.type=readarr
       - homepage.widget.url=http://readarr:8787
-      - homepage.widget.key=                                 # API key from webui
+      - homepage.widget.key=${READARR_API_KEY:?err}          # API key from webui
       - homepage.widget.fields=["wanted", "queued", "books"] # optional
       
 ###########################################################################
@@ -1580,9 +1634,9 @@ services:
       - homepage.description=TV Show Manager
       - homepage.widget.type=sonarr
       - homepage.widget.url=http://sonarr:8989
-      - homepage.widget.key=                                   # API key from webui
-      - homepage.widget.enableQueue=true                       # optional, defaults to false
-      - homepage.widget.fields=["wanted", "queued", "series"]  # optional
+      - homepage.widget.key=${SONARR_API_KEY:?err}                   # API key from webui
+      - homepage.widget.enableQueue=true                             # optional, defaults to false
+      - homepage.widget.fields=["wanted", "queued", "series"]        # optional
       
 ###########################################################################
 ###########################################################################
@@ -1852,3 +1906,10 @@ services:
       - traefik.http.services.whisparr.loadbalancer.server.scheme=http
       - traefik.http.services.whisparr.loadbalancer.server.port=6969
     # MIDDLEWARES
+    # HOMEPAGE  
+      - homepage.group=Content Managers
+      - homepage.name=Whisparr
+      - homepage.icon=whisparr.png
+      - homepage.href=http://whisparr.${CLOUDFLARE_DNS_ZONE:?err}
+      - homepage.description=Adult Manager 
+      
