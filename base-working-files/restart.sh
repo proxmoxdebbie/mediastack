@@ -45,7 +45,7 @@ echo Creating folders and setting permissions...
 echo 
 
 cd $FOLDER_FOR_YAMLS
-sudo -E mkdir -p $FOLDER_FOR_DATA/{authentik/{certs,media,templates},bazarr,chromium,crowdsec/data,ddns-updater,filebot,gluetun,grafana,headplane/data,headscale/data,heimdall,homarr/{configs,data,icons},homepage,huntarr,jellyfin,jellyseerr,lidarr,logs/{unpackerr,traefik},mylar,plex,portainer,postgresql,prometheus,prowlarr,qbittorrent,radarr,readarr,sabnzbd,sonarr,tailscale,tdarr/{server,configs,logs},tdarr-node,traefik/letsencrypt,traefik-certs-dumper,unpackerr,valkey,whisparr}
+sudo -E mkdir -p $FOLDER_FOR_DATA/{authentik/{certs,media,templates},bazarr,chromium,crowdsec/data,ddns-updater,filebot,gluetun/{auth},grafana,headplane/data,headscale/data,heimdall,homarr/{configs,data,icons},homepage,huntarr,jellyfin,jellyseerr,lidarr,logs/{unpackerr,traefik},mylar,plex,portainer,postgresql,prometheus,prowlarr,qbittorrent,radarr,readarr,sabnzbd,sonarr,tailscale,tdarr/{server,configs,logs},tdarr-node,traefik/letsencrypt,traefik-certs-dumper,unpackerr,valkey,whisparr}
 sudo -E mkdir -p $FOLDER_FOR_MEDIA/media/{anime,audio,books,comics,movies,music,photos,tv,xxx}
 sudo -E mkdir -p $FOLDER_FOR_MEDIA/usenet/{anime,audio,books,comics,complete,console,incomplete,movies,music,prowlarr,software,tv,xxx}
 sudo -E mkdir -p $FOLDER_FOR_MEDIA/torrents/{anime,audio,books,comics,complete,console,incomplete,movies,music,prowlarr,software,tv,xxx}
@@ -97,6 +97,7 @@ sudo cp traefik-static.yaml   $FOLDER_FOR_DATA/traefik/traefik.yaml          && 
 sudo cp traefik-dynamic.yaml  $FOLDER_FOR_DATA/traefik/dynamic.yaml          && echo "File traefik-dynamic.yaml  copied to $FOLDER_FOR_DATA/traefik/dynamic.yaml"
 sudo cp traefik-internal.yaml $FOLDER_FOR_DATA/traefik/internal.yaml         && echo "File traefik-internal.yaml copied to $FOLDER_FOR_DATA/traefik/internal.yaml"
 sudo cp crowdsec-acquis.yaml  $FOLDER_FOR_DATA/crowdsec/acquis.yaml          && echo "File crowdsec-acquis.yaml  copied to $FOLDER_FOR_DATA/crowdsec/acquis.yaml"
+sudo cp gluetun-auth.toml     $FOLDER_FOR_DATA/gluetun/auth/config.toml      && echo "File gluetun-auth.toml     copied to $FOLDER_FOR_DATA/gluetun/auth/config.toml"
 
 # Subroutine below will check if Docker successully started all containers, before pruning un-used images from Docker
 echo 
