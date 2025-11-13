@@ -227,8 +227,8 @@ services:
       - homepage.widget.type=authentik
       - homepage.widget.version=2
       - homepage.widget.url=http://authentik:9000
-      - homepage.widget.key=                                                      # API Key https://gethomepage.dev/widgets/services/authentik/
-      - homepage.widget.fields= ["users", "loginsLast24H", "failedLoginsLast24H"] # optional  
+      - homepage.widget.key=${AUTHENTIK_API_KEY:?err}                             # https://gethomepage.dev/widgets/services/authentik/
+      - homepage.widget.fields= ["users", "loginsLast24H", "failedLoginsLast24H"] # optional
       
   authentic-worker:
     image: ghcr.io/goauthentik/server:${AUTHENTIK_VERSION:?err}
@@ -379,7 +379,7 @@ services:
       - homepage.widget.type=crowdsec
       - homepage.widget.url=http://crowdsec:8080
       - homepage.widget.username=localhost
-      - homepage.widget.password=                #Local API Key (crowdsecLapiKey) from setup guide
+      - homepage.widget.password=${CROWDSEC_LAPI_KEY:?err} #Local API Key (crowdsecLapiKey) from setup guide
       
 ###########################################################################
 ###########################################################################
@@ -473,8 +473,9 @@ services:
       - homepage.widget.type=grafana
       - homepage.widget.url=http://grafana:3000
       - homepage.widget.username=admin
-      - homepage.widget.password=                                                              # created on initial webui login
-      #- homepage.widget.alerts=alertmanager                                                    # optional, default is grafana
+      - homepage.widget.username=admin
+      - homepage.widget.password=${GRAFANA_PASSWORD:?err}                                      # created on first webui login
+      #- homepage.widget.alerts=alertmanager                                                   # optional, default is grafana
       - homepage.widget.version=2                                                              # optional, default is 1
       - homepage.widget.fields=["dashboards", "datasources", "totalalerts", "alertstriggered"] # optional
       
@@ -561,10 +562,11 @@ services:
       - homepage.name=Tailscale
       - homepage.icon=tailscale.png
       - homepage.description=Ingress VPN
+      - homepage.href=http://tailscale.${CLOUDFLARE_DNS_ZONE:?err}
       - homepage.widget.type=tailscale
       - homepage.widget.url=http://tailscale.${CLOUDFLARE_DNS_ZONE:?err}
       - homepage.widget.deviceid=                                  # https://gethomepage.dev/widgets/services/tailscale/
-      - homepage.widget.key=                                       # https://gethomepage.dev/widgets/services/tailscale/
+      - homepage.widget.key=${TAILSCALE_API_KEY:?err}              # https://gethomepage.dev/widgets/services/tailscale/
       - homepage.widget.fields=["address", "last_seen", "expires"] # optional
      
 ###########################################################################
@@ -654,7 +656,7 @@ services:
       - homepage.description=Subtitle Manager
       - homepage.widget.type=bazarr
       - homepage.widget.url=http://bazarr:6767
-      - homepage.widget.key=                                        # API key from webui
+      - homepage.widget.key=${BAZARR_API_KEY:?err}                  # API key from webui
       - homepage.widget.fields=["missingEpisodes", "missingMovies"] # optional
       
 ###########################################################################
@@ -1064,7 +1066,7 @@ services:
       - homepage.description=Media Server
       - homepage.widget.type=jellyfin
       - homepage.widget.url=http://jellyfin:8096
-      - homepage.widget.key=                                             # API key from webui
+      - homepage.widget.key=${JELLYFIN_API_KEY:?err}                     # API key from webui
       - homepage.widget.enableUser=true                                  # optional, defaults to false
       - homepage.widget.enableMediaControl=true                          # optional, defaults to true
       - homepage.widget.enableNowPlaying=true                            # optional, defaults to true
@@ -1115,7 +1117,7 @@ services:
       - homepage.description=Media Requester
       - homepage.widget.type=jellyseerr
       - homepage.widget.url=http://jellyseerr:5055
-      - homepage.widget.key=                                                  # API key from webui
+      - homepage.widget.key=${JELLYSEERR_API_KEY:?err}                        # API key from webui
       - homepage.widget.fields=["pending", "approved", "available", "issues"] # optional
       
 ###########################################################################
@@ -1162,7 +1164,7 @@ services:
       - homepage.description=Music Manager
       - homepage.widget.type=lidarr
       - homepage.widget.url=http://lidarr:8686
-      - homepage.widget.key=                                   # API key from webui
+      - homepage.widget.key=${LIDARR_API_KEY:?err}             # API key from webui
       - homepage.widget.fields=["wanted", "queued", "artists"] # optional  
       
 ###########################################################################
@@ -1209,7 +1211,7 @@ services:
       - homepage.description=Comic Manager
       - homepage.widget.type=mylar
       - homepage.widget.url=http://mylar:8090
-      - homepage.widget.key=                                  # API key from webui
+      - homepage.widget.key=${MYLAR3_API_KEY:?err}            # API key from webui
       - homepage.widget.fields=["series", "issues", "wanted"] # optional
       
 ###########################################################################
@@ -1262,7 +1264,7 @@ services:
       - homepage.description=Media server
       - homepage.widget.type=plex
       - homepage.widget.url=http://plex:32400
-      - homepage.widget.key=                                         # Plex Token, see https://www.plexopedia.com/plex-media-server/general/plex-token/
+      - homepage.widget.key=${PLEX_API_KEY:?err}                     # see https://www.plexopedia.com/plex-media-server/general/plex-token/
       - homepage.widget.fields=["streams", "albums", "movies", "tv"] # optional
 
 ###########################################################################
@@ -1306,7 +1308,7 @@ services:
       - homepage.widget.type=portainer
       - homepage.widget.url=http://portainer:9000
       - homepage.widget.env=                                       # https://gethomepage.dev/widgets/services/portainer/
-      - homepage.widget.key=                                       # https://docs.portainer.io/api/access
+      - homepage.widget.key=${PORTAINER_API_KEY:?err}              # https://docs.portainer.io/api/access
       - homepage.widget.kubernetes=false                           # optional, defaults to false
       - homepage.widget.fields=["running", "stopped", "total"]     # optional, For Kubernetes mode: ["applications", "services", "namespaces"]
       
@@ -1353,7 +1355,7 @@ services:
       - homepage.description=Tracker Proxy
       - homepage.widget.type=prowlarr
       - homepage.widget.url=http://prowlarr:9696
-      - homepage.widget.key=                                                                                    # API key from webui
+      - homepage.widget.key=${PROWLARR_API_KEY:?err}                                                            # API key from webui
       - homepage.widget.fields=["numberOfGrabs", "numberOfQueries", "numberOfFailGrabs", "numberOfFailQueries"] # optional 
       
 ###########################################################################
@@ -1402,8 +1404,8 @@ services:
       - homepage.description=Torrent Client
       - homepage.widget.type=qbittorrent
       - homepage.widget.url=http://qbittorrent:${WEBUI_PORT_QBITTORRENT:?err}
-      #- homepage.widget.username=                                      # optional for local subnets
-      #- homepage.widget.password=                                      # optional for local subnets
+     # - homepage.widget.username=${QBITTORRENT_USER:?err}              # optional, from webui
+     # - homepage.widget.password=${QBITTORRENT_PASSWORD:?err}          # optional, from webui
       - homepage.widget.enableLeechProgress=true                       # optional, defaults to false
       - homepage.widget.enableLeechSize=true                           # optional, defaults to false
       - homepage.widget.fields=["leech", "download", "seed", "upload"] # optional
@@ -1452,7 +1454,7 @@ services:
       - homepage.description=Movie Manager
       - homepage.widget.type=radarr
       - homepage.widget.url=http://radarr:7878
-      - homepage.widget.key=                                             # API key from webui
+      - homepage.widget.key=${RADARR_API_KEY:?err}                       # API key from webui
       - homepage.widget.enableQueue=true                                 # optional, defaults to false
       - homepage.widget.fields=["wanted", "missing", "queued", "movies"] # optional
       
@@ -1500,7 +1502,7 @@ services:
       - homepage.description=eBook Manager
       - homepage.widget.type=readarr
       - homepage.widget.url=http://readarr:8787
-      - homepage.widget.key=                                 # API key from webui
+      - homepage.widget.key=${READARR_API_KEY:?err}          # API key from webui
       - homepage.widget.fields=["wanted", "queued", "books"] # optional
       
 ###########################################################################
@@ -1547,7 +1549,7 @@ services:
       - homepage.description=NZB Client
       - homepage.widget.type=sabnzbd
       - homepage.widget.url=http://sabnzbd:8080              # https://sabnzbd.org/wiki/extra/hostname-check.html
-      - homepage.widget.key=                                 # API key from webui
+      - homepage.widget.key=${SABNZBD_API_KEY:?err}          # API key from webui
       - homepage.widget.fields=["rate", "queue", "timeleft"] # optional
       
 ###########################################################################
@@ -1594,9 +1596,9 @@ services:
       - homepage.description=TV Show Manager
       - homepage.widget.type=sonarr
       - homepage.widget.url=http://sonarr:8989
-      - homepage.widget.key=                                   # API key from webui
-      - homepage.widget.enableQueue=true                       # optional, defaults to false
-      - homepage.widget.fields=["wanted", "queued", "series"]  # optional
+      - homepage.widget.key=${SONARR_API_KEY:?err}                   # API key from webui
+      - homepage.widget.enableQueue=true                             # optional, defaults to false
+      - homepage.widget.fields=["wanted", "queued", "series"]        # optional
       
 ###########################################################################
 ###########################################################################
